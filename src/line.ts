@@ -1,4 +1,6 @@
-import { Color } from './image'
+import { Color, ImageCanvas } from './image'
+
+export type Vec2 = [number, number]
 
 /*
  * Breshenham's line algorithm is a way to determing which points on a grid should
@@ -6,7 +8,10 @@ import { Color } from './image'
  *
  * Only integer arithmetic is used for efficiency.
  */
-export function line(x0: number, y0: number, x1: number, y1: number, image: any, color: Color) {
+export function line(t0: Vec2, t1: Vec2, image: ImageCanvas, color: Color) {
+    let [x0, y0] = t0
+    let [x1, y1] = t1
+
     let steep = false
     if (Math.abs(x1 - x0) < Math.abs(y1 - y0)) {
         // if the line is steep (more vertical distance than horizontal), we want to draw

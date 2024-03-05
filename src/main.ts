@@ -6,7 +6,43 @@ import fileContents from './model/african_head/african_head.obj?raw'
 
 const image = createImageCanvas()
 
+function xAtYForLine(t0: Vec2, t1: Vec2, y: number): number {
+    const [x0, y0] = t0
+    const [x1, y1] = t1
+    return ((x1 - x0) * (y - y0)) / (y1 - y0) + x0
+}
+
 function triangle(t0: Vec2, t1: Vec2, t2: Vec2, image: ImageCanvas, color: Color) {
+    // sort vertices by y (quick bubble sort)
+    if (t0[1] > t1[1]) {
+        ;[t0, t1] = [t1, t0]
+    }
+    if (t0[1] > t2[1]) {
+        ;[t0, t2] = [t2, t0]
+    }
+    if (t1[1] > t2[1]) {
+        ;[t1, t2] = [t2, t1]
+    }
+
+    // segment 1: [t0 -> t1, t0 -> X] where X is somewhere between t0 and t1
+    for (let y = t0[1]; y <= t1[1]; y++) {
+        let x0 = xAtYForLine(t0, t2, y)
+        let x1 = xAtYForLine(t0, t1, y)
+        let a: Vec2 = [x0, y]
+        let b: Vec2 = [x1, y]
+        line(a, b, image, color)
+    }
+
+    // segment 2: [t0 -> t1, t0 -> X] where X is somewhere between t0 and t1
+    for (let y = t1[1]; y <= t2[1]; y++) {
+        let x0 = xAtYForLine(t0, t2, y)
+        let x1 = xAtYForLine(t1, t2, y)
+        let a: Vec2 = [x0, y]
+        let b: Vec2 = [x1, y]
+        line(a, b, image, color)
+    }
+
+    // console.log(t0, t1, t2)
     line(t0, t1, image, color)
     line(t1, t2, image, color)
     line(t2, t0, image, color)
